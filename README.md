@@ -56,6 +56,8 @@ end
 <img width="758" height="714" alt="image" src="https://github.com/user-attachments/assets/552e12b0-2f9a-4137-92d5-b5f9275a92ce" />
 <img width="757" height="716" alt="image" src="https://github.com/user-attachments/assets/3d957e71-a819-4e74-8fab-4c77db6b18aa" />
 
+# Tabulation:
+
 
 # Result
 FDM was successfully simulated. The six input signals were combined into one composite signal and later recovered correctly through demultiplexing using Scilab.
