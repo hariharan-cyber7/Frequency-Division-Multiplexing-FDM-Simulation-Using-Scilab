@@ -10,51 +10,53 @@ Each signal is allocated a unique frequency band, allowing them to coexist witho
 
 # SCILAB Code
 ```sci
-t = linspace(0, 1, 1000);
-freqs = [5, 5.5, 6, 6.5, 7, 7.5];
-
-signals = zeros(6, length(t));
-for i = 1:6
-    signals(i, :) = sin(2 * %pi * freqs(i) * t);
+clc; clear; close;
+fs=80000; N=floor(0.05*fs); t=(0:N-1)/fs;
+fm=[436 446 456 466 476 486];
+fc=[4360 4460 4560 4660 4760 4860];
+Am=[5.6 5.7 5.8 5.9 6 6.1];
+Ac=[11.4 11.5 11.7 11.8 12 12.2];
+num=length(fm);
+for i=1:num
+    m(i,:)=Am(i)*sin(2*%pi*fm(i)*t);
 end
-
-fdm_signal = zeros(1, length(t));
-for i = 1:6
-    fdm_signal = fdm_signal + signals(i, :);
+fdm=zeros(1,N);
+for i=1:num
+    fdm = fdm + Ac(i)*cos(2*%pi*fc(i)*t).*m(i,:);
 end
-
-demux_signals = zeros(6, length(t));
-for i = 1:6
-    demux_signals(i, :) = fdm_signal .* sin(2 * %pi * freqs(i) * t);
+function h=FIR(fc1,fc2,fs,M,mode)
+    n=-M:M; L=length(n);
+    x1=2*fc1*n/fs; x2=2*fc2*n/fs;
+    s1=ones(1,L); s2=ones(1,L);
+    for k=1:L
+        if x1(k)<>0 then s1(k)=sin(%pi*x1(k))/(%pi*x1(k)); end
+        if x2(k)<>0 then s2(k)=sin(%pi*x2(k))/(%pi*x2(k)); end
+    end
+    lp1=(2*fc1/fs)*s1; lp2=(2*fc2/fs)*s2;
+    w=(0.54-0.46*cos(2*%pi*(n+M)/(2*M)));
+    if mode==1 then h=lp1.*w;
+    else h=(lp2-lp1).*w; end
+    h=h/sum(h);
+endfunction
+M=300;
+for i=1:num
+    bp=FIR(fc(i)-600,fc(i)+600,fs,M,2);
+    iso=conv(fdm,bp,"same");
+    mix=iso.*cos(2*%pi*fc(i)*t);
+    lp=FIR(800,0,fs,M,1);
+    demod(i,:)= (2/Ac(i))*conv(mix,lp,"same");
 end
-
-scf(1);
-clf;
-for i = 1:6
-    subplot(3,2,i);
-    plot(t, signals(i, :));
-    title('Original Signal f=' + string(freqs(i)));
-end
-
-
-scf(2);
-clf;
-plot(t, fdm_signal);
-title("FDM Signal");
-
-scf(3);
-clf;
-for i = 1:6
-    subplot(3,2,i);
-    plot(t, demux_signals(i, :));
-    title('Demultiplexed Signal f=' + string(freqs(i)));
-end
+scf(1); clf;
+for i=1:num subplot(num,1,i); plot(t,m(i,:)); end
+scf(2); clf; plot(t,fdm);
+scf(3); clf;
+for i=1:num subplot(num,1,i); plot(t,demod(i,:)); end
 ```
 
 # Output image
-<img width="762" height="696" alt="image" src="https://github.com/user-attachments/assets/2c31d985-2677-403f-807c-935f625cf133" />
-<img width="758" height="714" alt="image" src="https://github.com/user-attachments/assets/552e12b0-2f9a-4137-92d5-b5f9275a92ce" />
-<img width="757" height="716" alt="image" src="https://github.com/user-attachments/assets/3d957e71-a819-4e74-8fab-4c77db6b18aa" />
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/09450b55-4bd3-43b9-8657-22ff24eba04b" />
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/83572359-0b0d-4ccf-a594-4f067d4499a5" />
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/9a4ad1da-cfe3-42ab-aea0-4016110a8acc" />
 
 # Tabulation:
 
