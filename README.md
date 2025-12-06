@@ -60,6 +60,8 @@ for i=1:num subplot(num,1,i); plot(t,demod(i,:)); end
 
 # Tabulation:
 
+<img width="610" height="944" alt="image" src="https://github.com/user-attachments/assets/c5060dd4-6f9e-43de-b7e8-f193d61ffdde" />
+<img width="611" height="946" alt="image" src="https://github.com/user-attachments/assets/30aaf2e8-8d14-4e01-95ff-9ae55eea770c" />
 
 # Result
 FDM was successfully simulated. The six input signals were combined into one composite signal and later recovered correctly through demultiplexing using Scilab.
